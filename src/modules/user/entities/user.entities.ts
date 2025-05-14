@@ -1,0 +1,39 @@
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+@Entity()
+export class User {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    firstName: string;
+
+    @Column()
+    lastName: string;
+
+    @Column({ unique: true })
+    email: string;
+
+    @Column()
+    phone: string;
+
+    @Column()
+    address: string;
+
+    @Column({ type: 'date' })
+    dateBirth: Date;
+
+    @Column({ nullable: true })
+    bloodType: string;
+
+    @Column({ type: 'text', nullable: true })
+    allergies: string;
+    @Column()
+    contactEmergency: string;
+
+    @Column()
+    password: string;
+
+    @Column({ default: 'patient' })
+    role: string;
+}
