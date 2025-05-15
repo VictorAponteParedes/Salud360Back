@@ -1,0 +1,48 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { Specialty } from '../../specialties/entities/specialty.entity';
+import { Lenguages } from 'src/modules/lenguages/entities/lenguages.entities';
+
+
+@Entity()
+export class Doctor {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @Column()
+    firstName: string;
+
+    @Column()
+    lastName: string;
+
+    @Column({ type: 'decimal', precision: 3, scale: 1, default: 0 })
+    rating: number;
+
+    @Column({ default: 0 })
+    reviews: number;
+
+    @Column({ type: 'enum', enum: ['available', 'unavailable', 'on_leave'], default: 'available' })
+    status: string;
+
+    @Column({ nullable: true })
+    schedule: string;
+
+    @Column({ nullable: true })
+    experience: string;
+
+    @Column({ type: 'text', nullable: true })
+    description: string;
+
+    @ManyToMany(() => Specialty, specialty => specialty.doctors)
+    @JoinTable()
+    specialties: Specialty[];
+
+
+    @ManyToMany(() => Lenguages, lenguage => lenguage.doctors)
+    @JoinTable()
+    languages: Lenguages[];
+
+
+    get fullName(): string {
+        return `Dr. ${this.firstName} ${this.lastName}`;
+    }
+}
