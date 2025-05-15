@@ -4,7 +4,11 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { LenguageModule } from './modules/lenguages/lenguage.module';
 import { User } from './modules/user/entities/user.entities';
+import { Doctor } from './modules/doctors/entities/doctors.entities';
+import { Specialty } from './modules/specialties/entities/specialty.entity';
+import { Lenguages } from './modules/lenguages/entities/lenguages.entities';
 
 @Module({
   imports: [
@@ -15,11 +19,12 @@ import { User } from './modules/user/entities/user.entities';
       username: 'root',
       password: 'Admin123.',
       database: 'salud360_db',
-      entities: [User],
-      synchronize: true,
+      entities: [User, Doctor, Specialty, Lenguages],
+      synchronize: false,
     }),
     UserModule,
-    AuthModule
+    AuthModule,
+    LenguageModule
   ],
   controllers: [AppController],
   providers: [AppService],
