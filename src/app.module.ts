@@ -26,7 +26,7 @@ import { Lenguages } from './modules/lenguages/entities/lenguages.entities';
       password: null,
       database: 'salud360_db',
       entities: [User, Doctor, Specialty, Lenguages],
-      synchronize: false,
+      synchronize: true,
     }),
     UserModule,
     AuthModule,
