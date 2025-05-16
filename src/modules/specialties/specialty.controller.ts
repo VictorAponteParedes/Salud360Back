@@ -19,11 +19,11 @@ export class SpecialtyController {
 
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.specialtyService.findOne(+id);
+        return this.specialtyService.findOne(id);
     }
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.specialtyService.removeSpecialty(+id);
+        return this.specialtyService.removeSpecialty(id);
     }
 }
