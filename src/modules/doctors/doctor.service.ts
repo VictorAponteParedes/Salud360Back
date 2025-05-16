@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Doctor } from './entities/doctors.entities';
 import { Specialty } from '../specialties/entities/specialty.entity';
 import { Lenguages } from '../lenguages/entities/lenguages.entities';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
+import { User } from '../user/entities/user.entities';
 
 @Injectable()
 export class DoctorsService {
@@ -15,32 +16,40 @@ export class DoctorsService {
     private readonly specialtyRepository: Repository<Specialty>,
     @InjectRepository(Lenguages)
     private readonly languageRepository: Repository<Lenguages>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createDoctorDto: CreateDoctorDto) {
-    // Buscar especialidades
-    const specialties = await this.specialtyRepository.findByIds(
-      createDoctorDto.specialtyIds,
-    );
-    
+    const specialties = await this.specialtyRepository.findBy({
+      id: In(createDoctorDto.specialtyIds),
+    });
     if (specialties.length !== createDoctorDto.specialtyIds.length) {
       throw new NotFoundException('Una o más especialidades no existen');
     }
 
-    // Buscar lenguajes
-    const languages = await this.languageRepository.findByIds(
-      createDoctorDto.languageIds,
-    );
-    
+    const languages = await this.languageRepository.findBy({
+      id: In(createDoctorDto.languageIds),
+    });
     if (languages.length !== createDoctorDto.languageIds.length) {
       throw new NotFoundException('Uno o más lenguajes no existen');
     }
 
-    // Crear doctor
+    let users = [];
+    if (createDoctorDto.patientIds && createDoctorDto.patientIds.length > 0) {
+      users = await this.userRepository.findBy({
+        id: In(createDoctorDto.patientIds),
+      });
+      if (users.length !== createDoctorDto.patientIds.length) {
+        throw new NotFoundException('Uno o más pacientes no existen');
+      }
+    }
+
     const doctor = this.doctorRepository.create({
       ...createDoctorDto,
       specialties,
       languages,
+      patients: users,
     });
 
     return this.doctorRepository.save(doctor);
@@ -48,11 +57,11 @@ export class DoctorsService {
 
   async findAll() {
     return this.doctorRepository.find({
-      relations: ['specialties', 'languages'],
+      relations: ['specialties', 'languages', 'patients'],
     });
   }
 
-  async findOne(id: string) {
+   async findOne(id: string) {
     const doctor = await this.doctorRepository.findOne({
       where: { id },
       relations: ['specialties', 'languages'],
