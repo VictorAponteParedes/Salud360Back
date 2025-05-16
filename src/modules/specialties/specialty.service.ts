@@ -22,11 +22,11 @@ export class SpecialtyService {
         return this.specialtyRepository.find({ relations: ['doctors'] })
     }
 
-    findOne(id: number) {
+    findOne(id: string) {
         return this.specialtyRepository.findOne({ where: { id }, relations: ['doctors'] })
     }
 
-    async removeSpecialty(id: number) {
+    async removeSpecialty(id: string) {
         const specialty = await this.findOne(id);
         return this.specialtyRepository.remove(specialty);
     }
