@@ -5,8 +5,8 @@ import { Doctor } from 'src/modules/doctors/entities/doctors.entities';
 
 @Entity()
 export class Specialty {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column({ unique: true })
     name: string;
