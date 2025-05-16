@@ -8,6 +8,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LenguageModule } from './modules/lenguages/lenguage.module';
 import { SpecialtyModule } from './modules/specialties/specialty.module';
+import { DoctorsModule } from './modules/doctors/doctor.module';
 
 //Entities
 import { User } from './modules/user/entities/user.entities';
@@ -19,18 +20,19 @@ import { Lenguages } from './modules/lenguages/entities/lenguages.entities';
   imports: [
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: "localhost",
+      host: "127.0.0.1",
       port: 3306,
       username: 'root',
-      password: 'Admin123.',
+      password: null,
       database: 'salud360_db',
       entities: [User, Doctor, Specialty, Lenguages],
-      synchronize: true,
+      synchronize: false,
     }),
     UserModule,
     AuthModule,
     LenguageModule,
-    SpecialtyModule
+    SpecialtyModule,
+    DoctorsModule
   ],
   controllers: [AppController],
   providers: [AppService],
