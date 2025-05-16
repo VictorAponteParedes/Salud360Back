@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Doctor } from 'src/modules/doctors/entities/doctors.entities';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     firstName: string;
@@ -36,4 +37,8 @@ export class User {
 
     @Column({ default: 'patient' })
     role: string;
+
+    @ManyToMany(() => Doctor, doctor => doctor.patients)
+    doctors: Doctor[];
+
 }
