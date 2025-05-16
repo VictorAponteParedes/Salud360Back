@@ -39,4 +39,8 @@ export class CreateDoctorDto {
 
   @IsArray()
   languageIds: string[];
+
+  @IsOptional()
+  @IsArray()
+  patientIds?: number[]; 
 }
