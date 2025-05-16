@@ -1,5 +1,6 @@
 import { Doctor } from 'src/modules/doctors/entities/doctors.entities';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { File } from 'src/modules/file-upload/entities/file.entity';
 
 @Entity()
 export class User {
@@ -40,5 +41,9 @@ export class User {
 
     @ManyToMany(() => Doctor, doctor => doctor.patients)
     doctors: Doctor[];
+
+    @ManyToOne(() => File, { nullable: true })
+    @JoinColumn()
+    profileImage: File;
 
 }
