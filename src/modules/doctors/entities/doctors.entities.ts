@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
 import { Specialty } from '../../specialties/entities/specialty.entity';
 import { Lenguages } from 'src/modules/lenguages/entities/lenguages.entities';
+import { User } from 'src/modules/user/entities/user.entities';
 
 
 @Entity()
@@ -40,6 +41,11 @@ export class Doctor {
     @ManyToMany(() => Lenguages, lenguage => lenguage.doctors)
     @JoinTable()
     languages: Lenguages[];
+
+    @ManyToMany(() => User, user => user.doctors)
+    @JoinTable()
+    patients: User[];
+
 
 
     get fullName(): string {
