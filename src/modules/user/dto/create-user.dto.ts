@@ -38,5 +38,5 @@ export class CreateUserDto {
     confirmPassword: string;
 
     @IsString()
-    imageProfile: string
+    profileImageId?: string;
 }
