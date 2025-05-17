@@ -13,7 +13,7 @@ export class FileService {
     @InjectRepository(File)
     private fileRepository: Repository<File>,
     private configService: ConfigService
-  ) {}
+  ) { }
 
   async saveFile(file: Express.Multer.File): Promise<File> {
     const fileExtension = extname(file.originalname);
