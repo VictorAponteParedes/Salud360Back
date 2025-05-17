@@ -20,20 +20,24 @@ export class UserService {
     async register(createUserDto: CreateUserDto, profileImageFile?: Express.Multer.File) {
         const { email, password, confirmPassword, profileImageId } = createUserDto;
 
-        // Validaciones...
+        const existingUser = await this.userRepository.findOne({ where: { email } });
+        if (existingUser) {
+            throw new ConflictException('El email ya está registrado');
+        }
+
+        if (password !== confirmPassword) {
+            throw new ConflictException('Las contraseñas no coinciden');
+        }
+
 
         let profileImage: File | null = null;
-
-        // Si se subió un archivo nuevo
         if (profileImageFile) {
             profileImage = await this.fileService.saveFile(profileImageFile);
         }
-        // Si se proporcionó un ID de imagen existente
         else if (profileImageId) {
             profileImage = await this.fileRepository.findOneBy({ id: profileImageId });
         }
 
-        // Crear usuario
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = this.userRepository.create({
@@ -48,7 +52,7 @@ export class UserService {
     async findByEmail(email: string): Promise<User | undefined> {
         return this.userRepository.findOne({
             where: { email },
-            relations: ['profileImage'] // Carga la relación con la imagen
+            relations: ['profileImage']
         });
     }
 
@@ -62,15 +66,20 @@ export class UserService {
             throw new NotFoundException('Usuario no encontrado');
         }
 
-        // Eliminar la imagen anterior si existe
         if (user.profileImage) {
             await this.fileRepository.remove(user.profileImage);
         }
 
-        // Guardar nueva imagen
         const newProfileImage = await this.fileService.saveFile(file);
         user.profileImage = newProfileImage;
 
         return this.userRepository.save(user);
+    }
+
+    async findById(id: string): Promise<User | null> {
+        return this.userRepository.findOne({
+            where: { id },
+            relations: ['profileImage']
+        });
     }
 }
