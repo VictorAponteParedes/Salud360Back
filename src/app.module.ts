@@ -21,16 +21,15 @@ import { File } from './modules/file-upload/entities/file.entity';
 
 @Module({
   imports: [
-    // Configura ConfigModule primero
     ConfigModule.forRoot({
-      isGlobal: true, // Esto hace que ConfigService esté disponible en todos los módulos
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: "127.0.0.1",
+      host: "localhost",
       port: 3306,
       username: 'root',
-      password: null,
+      password: 'Admin123.',
       database: 'salud360_db',
       entities: [User, Doctor, Specialty, Lenguages, File],
       synchronize: true,
