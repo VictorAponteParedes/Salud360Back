@@ -102,4 +102,12 @@ export class UserService {
         await this.userRepository.save(user);
         return { message: 'Contraseña actualizada correctamente' };
     }
+
+    async findByResetToken(token: string): Promise<User | null> {
+        return this.userRepository.findOne({ where: { resetPasswordToken: token } });
+    }
+
+    async save(user: User) {
+        return this.userRepository.save(user);
+    }
 }
