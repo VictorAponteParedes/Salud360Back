@@ -7,11 +7,13 @@ export class EmailService {
   const resetUrl = `http://localhost:3000/users/reset-password?token=${token}`;
   console.log('Enviando correo a:', email, 'con url:', resetUrl); // <-- agrega esto
   await transporter.sendMail({
-    from: "vaponte520@gmail.com",
-    to: email,
-    subject: 'Restablece tu contraseña',
-    html: `<p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-           <a href="${resetUrl}">${resetUrl}</a>`,
-  });
-}
+  from: "vaponte520@gmail.com",
+  to: email,
+  subject: 'Restablece tu contraseña',
+  html: `<p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+         <a href="${resetUrl}">${resetUrl}</a>`,
+})
+    .then(info => console.log('Correo enviado:', info))
+    .catch(err => console.error('Error enviando correo:', err));
+    }
 }
