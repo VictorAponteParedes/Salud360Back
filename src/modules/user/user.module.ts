@@ -6,11 +6,12 @@ import { User } from "./entities/user.entities";
 import { File } from "../file-upload/entities/file.entity";
 import { FileService } from "../file-upload/file.service";
 import { UploadModule } from "../file-upload/file.module";
+import { EmailService } from "../Email/email.service";
 
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, File]), UploadModule],
-    providers: [UserService, FileService],
+    providers: [UserService, FileService, EmailService],
     controllers: [UserController],
     exports: [UserService],
 })
