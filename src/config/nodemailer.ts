@@ -7,15 +7,3 @@ export const transporter = nodemailer.createTransport({
     pass: "fbua wfgh orix itov",
   },
 });
-
-transporter.sendMail({
-  from: 'vaponte520@gmail.com',
-  to: 'vaponte520@gmail.com',
-  subject: 'Prueba directa',
-  text: '¡Hola! Esto es una prueba directa desde Node.js',
-}, (err, info) => {
-  if (err) {
-    return console.error('Error:', err);
-  }
-  console.log('Correo enviado:', info.response);
-});
