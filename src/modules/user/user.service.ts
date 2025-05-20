@@ -92,13 +92,14 @@ export class UserService {
             throw new NotFoundException('Usuario no encontrado')
         }
 
-        const isMatch = await bcrypt.compare(changePasswordDto.currenPassword, user.password);
+        const isMatch = await bcrypt.compare(changePasswordDto.currentPassword, user.password);
+
         if(!isMatch){
             throw new ConflictException('La contraseña actual es incorrecta');
         }
 
-        user.password = bcrypt.hash(changePasswordDto.newPassword, 10);
-        await this.userRepository.save(user)
+        user.password = await bcrypt.hash(changePasswordDto.newPassword, 10);
+        await this.userRepository.save(user);
         return { message: 'Contraseña actualizada correctamente' };
     }
 }

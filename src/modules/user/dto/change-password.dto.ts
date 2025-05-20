@@ -4,7 +4,7 @@ import {IsString, MinLength} from '@nestjs/class-validator'
 export class ChangePasswordDto {
 
 @IsString()
-currenPassword: string;
+currentPassword: string;
 
 @IsString()
 @MinLength(6)
