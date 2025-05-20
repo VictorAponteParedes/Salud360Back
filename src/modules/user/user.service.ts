@@ -6,6 +6,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
 import { FileService } from "../file-upload/file.service";
 import { File } from "../file-upload/entities/file.entity";
+import { ChangePasswordDto } from "./dto/change-password.dto";
 
 @Injectable()
 export class UserService {
@@ -81,5 +82,23 @@ export class UserService {
             where: { id },
             relations: ['profileImage']
         });
+    }
+
+    async changePassword( userId: string, changePasswordDto: ChangePasswordDto){
+
+        const user = await this.userRepository.findOne({where: {id: userId}});
+
+        if(!user){
+            throw new NotFoundException('Usuario no encontrado')
+        }
+
+        const isMatch = await bcrypt.compare(changePasswordDto.currenPassword, user.password);
+        if(!isMatch){
+            throw new ConflictException('La contraseña actual es incorrecta');
+        }
+
+        user.password = bcrypt.hash(changePasswordDto.newPassword, 10);
+        await this.userRepository.save(user)
+        return { message: 'Contraseña actualizada correctamente' };
     }
 }
