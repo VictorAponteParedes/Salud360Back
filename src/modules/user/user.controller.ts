@@ -1,8 +1,10 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param, Patch, UseGuards, Req } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FileService } from '../file-upload/file.service';
+import { AuthGuard } from '@nestjs/passport';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('users')
 export class UserController {
@@ -31,4 +33,13 @@ export class UserController {
     const url = await this.fileService.getFileUrl(user.profileImage.id);
     return { url };
   }
+
+  @Patch('change-password')
+  @UseGuards(AuthGuard('jwt'))
+  async changePassword(
+    @Req() req , @Body() changePassword :ChangePasswordDto
+  ){
+    return this.userService.changePassword(req.user.id, changePassword)
+  }
+
 }
