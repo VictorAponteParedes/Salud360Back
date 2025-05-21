@@ -5,17 +5,17 @@ import * as path from 'path';
 
 @Injectable()
 export class EmailService {
-  async sendResetPassword(email: string, token: string) {
-    const resetUrl = `http://localhost:3000/users/reset-password?token=${token}`;
-    const templatePath = path.join(process.cwd(), 'src', 'modules', 'Email', 'templates', 'reset-password.html');
+  async sendResetPassword(email: string, code: string) {
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'Email', 'templates', 'reset-code.html');
     let html = fs.readFileSync(templatePath, 'utf8');
-    html = html.replace('{{resetUrl}}', resetUrl);
+    html = html.replace('{{resetCode}}', code);
+    html = html.replace('{{year}}', new Date().getFullYear().toString());
 
     try {
       const mailOptions = {
         from: '"Nombre de tu App" <vaponte520@gmail.com>',
         to: email,
-        subject: 'Restablece tu contraseña',
+        subject: 'Código para restablecer tu contraseña',
         html,
       };
 
