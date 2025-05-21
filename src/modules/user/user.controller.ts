@@ -46,28 +46,29 @@ export class UserController {
   }
 
 
-  @Post('forgot-password')
+   @Post('forgot-password')
   async forgotPassword(@Body('email') email: string) {
     const user = await this.userService.findByEmail(email);
     if (!user) {
-      return { message: 'Si el correo existe, se enviará un enlace de recuperación.' };
+      return { message: 'Si el correo existe, se enviará un código de recuperación.' };
     }
-    const token = uuidv4();
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hora
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    user.resetPasswordToken = code;
+    user.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000);
     await this.userService.save(user);
-    await this.emailService.sendResetPassword(email, token);
-    return { message: 'Si el correo existe, se enviará un enlace de recuperación.' };
+    await this.emailService.sendResetPassword(email, code); 
+    return { message: 'Si el correo existe, se enviará un código de recuperación.' };
   }
 
   @Post('reset-password')
   async resetPassword(
-    @Body('token') token: string,
+    @Body('code') code: string,
     @Body('newPassword') newPassword: string
   ) {
-    const user = await this.userService.findByResetToken(token);
+    const user = await this.userService.findByResetToken(code);
     if (!user || user.resetPasswordExpires < new Date()) {
-      throw new BadRequestException('Token inválido o expirado');
+      throw new BadRequestException('Código inválido o expirado');
     }
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordToken = null;
