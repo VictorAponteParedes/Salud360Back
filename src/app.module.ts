@@ -11,6 +11,7 @@ import { LenguageModule } from './modules/lenguages/lenguage.module';
 import { SpecialtyModule } from './modules/specialties/specialty.module';
 import { DoctorsModule } from './modules/doctors/doctor.module';
 import { UploadModule } from './modules/file-upload/file.module';
+import { HospitalModule } from './modules/hospital/hospital.module';
 
 // Entities
 import { User } from './modules/user/entities/user.entities';
@@ -40,7 +41,8 @@ import { Hospital } from './modules/hospital/entities/hospital.entities';
     LenguageModule,
     SpecialtyModule,
     DoctorsModule,
-    UploadModule
+    UploadModule,
+    HospitalModule
   ],
   controllers: [AppController],
   providers: [AppService],
