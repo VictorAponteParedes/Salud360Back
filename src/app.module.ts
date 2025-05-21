@@ -18,6 +18,7 @@ import { Doctor } from './modules/doctors/entities/doctors.entities';
 import { Specialty } from './modules/specialties/entities/specialty.entity';
 import { Lenguages } from './modules/lenguages/entities/lenguages.entities';
 import { File } from './modules/file-upload/entities/file.entity';
+import { Hospital } from './modules/hospital/entities/hospital.entities';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { File } from './modules/file-upload/entities/file.entity';
       username: 'root',
       password: '',
       database: 'salud360_db',
-      entities: [User, Doctor, Specialty, Lenguages, File],
+      entities: [User, Doctor, Specialty, Lenguages, File, Hospital],
       synchronize: true,
     }),
     UserModule,
