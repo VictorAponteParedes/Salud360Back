@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
 import { Specialty } from '../../specialties/entities/specialty.entity';
 import { Lenguages } from 'src/modules/lenguages/entities/lenguages.entities';
 import { User } from 'src/modules/user/entities/user.entities';
+import { Hospital } from 'src/modules/hospital/entities/hospital.entities';
 
 
 @Entity()
@@ -46,6 +47,8 @@ export class Doctor {
     @JoinTable()
     patients: User[];
 
+    @ManyToOne(() => Hospital, hospital => hospital.doctors, { nullable: true })
+    hospital: Hospital;
 
 
     get fullName(): string {
