@@ -5,7 +5,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { FileService } from '../file-upload/file.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from '../Email/email.service';
 import * as bcrypt from 'bcrypt';
 @Controller('users')
