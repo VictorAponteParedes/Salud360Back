@@ -115,38 +115,20 @@
 <body>
     <div class="container">
         <div class="header">
-            <!-- Reemplaza con tu logo en formato blanco -->
             <img src="https://via.placeholder.com/180x42/ffffff/2563eb?text=TuLogo" alt="Logo" class="logo">
         </div>
-
         <div class="content">
-            <h1>Restablece tu contraseña</h1>
+            <h1>Código de recuperación</h1>
             <p>Hola,</p>
-            <p>Recibimos una solicitud para restablecer la contraseña asociada a tu cuenta. Haz clic en el botón a
-                continuación para continuar con el proceso.</p>
-
-            <div class="text-center">
-                <a href="{{resetUrl}}" class="btn">Restablecer contraseña</a>
+            <p>Tu código para restablecer la contraseña es:</p>
+            <div class="card" style="font-size: 2em; letter-spacing: 4px; font-weight: bold;">
+                {{resetCode}}
             </div>
-
-
-
-            <p>Este enlace expirará en 24 horas por motivos de seguridad.</p>
-
+            <p>Este código expirará en 30 minutos.</p>
             <div class="security-note">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                        stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M12 8V12" stroke="#64748b" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M12 16H12.01" stroke="#64748b" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Si no solicitaste este cambio, por favor ignora este mensaje o contacta con nuestro equipo de soporte.
+                Si no solicitaste este cambio, ignora este mensaje.
             </div>
         </div>
-
         <div class="footer">
             &copy; {{year}} Tu Empresa. Todos los derechos reservados.<br>
             <span class="text-muted">Este es un mensaje automático, por favor no respondas directamente.</span>
