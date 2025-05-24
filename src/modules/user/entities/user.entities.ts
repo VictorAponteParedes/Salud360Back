@@ -17,6 +17,9 @@ export class User {
     @Column({ unique: true })
     email: string;
 
+    @Column({ unique: true, nullable: true })
+    documentNumber: string;
+
     @Column()
     phone: string;
 
@@ -31,6 +34,7 @@ export class User {
 
     @Column({ type: 'text', nullable: true })
     allergies: string;
+
     @Column()
     contactEmergency: string;
 
@@ -56,5 +60,4 @@ export class User {
     @ManyToOne(() => Hospital, hospital => hospital.patients, { nullable: true })
     @JoinColumn({ name: 'hospitalId' })
     hospital: Hospital;
-
 }
