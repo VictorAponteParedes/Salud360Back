@@ -13,7 +13,7 @@ export class EmailService {
 
     try {
       const mailOptions = {
-        from: '"Nombre de tu App" <vaponte520@gmail.com>',
+        from: `"Nombre de tu App" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: 'Código para restablecer tu contraseña',
         html,
