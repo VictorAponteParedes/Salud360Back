@@ -27,14 +27,20 @@ import { Hospital } from './modules/hospital/entities/hospital.entities';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT, 10),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, Doctor, Specialty, Lenguages, File, Hospital],
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== 'production',
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false  // Necesario para la conexión SSL
+        }
+      }
     }),
     UserModule,
     AuthModule,
