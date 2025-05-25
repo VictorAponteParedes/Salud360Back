@@ -25,6 +25,7 @@ import { Hospital } from './modules/hospital/entities/hospital.entities';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
