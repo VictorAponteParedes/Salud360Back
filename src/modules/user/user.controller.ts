@@ -36,6 +36,17 @@ export class UserController {
     return { url };
   }
 
+  @Get(':id')
+  async getUserById(@Param('id') id: string) {
+    return this.userService.getUserById(id)
+  }
+
+  @Get()
+  async getAllUsers() {
+    return this.userService.getAllUsers()
+  }
+
+
   @Patch('change-password')
   @UseGuards(AuthGuard('jwt'))
   async changePassword(

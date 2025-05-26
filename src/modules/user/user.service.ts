@@ -50,6 +50,14 @@ export class UserService {
         return this.userRepository.save(user);
     }
 
+    async getUserById(id: string) {
+        return this.userRepository.findOne({ where: { id }, relations: ['doctors', 'hospital'] })
+    }
+
+    async getAllUsers() {
+        return this.userRepository.find({ relations: ['doctors', 'hospital'] })
+    }
+
     async findByEmail(email: string): Promise<User | undefined> {
         return this.userRepository.findOne({
             where: { email },
@@ -84,17 +92,17 @@ export class UserService {
         });
     }
 
-    async changePassword( userId: string, changePasswordDto: ChangePasswordDto){
+    async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
 
-        const user = await this.userRepository.findOne({where: {id: userId}});
+        const user = await this.userRepository.findOne({ where: { id: userId } });
 
-        if(!user){
+        if (!user) {
             throw new NotFoundException('Usuario no encontrado')
         }
 
         const isMatch = await bcrypt.compare(changePasswordDto.currentPassword, user.password);
 
-        if(!isMatch){
+        if (!isMatch) {
             throw new ConflictException('La contraseña actual es incorrecta');
         }
 
