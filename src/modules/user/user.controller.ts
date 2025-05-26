@@ -39,13 +39,13 @@ export class UserController {
   @Patch('change-password')
   @UseGuards(AuthGuard('jwt'))
   async changePassword(
-    @Req() req , @Body() changePassword :ChangePasswordDto
-  ){
+    @Req() req, @Body() changePassword: ChangePasswordDto
+  ) {
     return this.userService.changePassword(req.user.id, changePassword)
   }
 
 
-   @Post('forgot-password')
+  @Post('forgot-password')
   async forgotPassword(@Body('email') email: string) {
     const user = await this.userService.findByEmail(email);
     if (!user) {
@@ -56,7 +56,7 @@ export class UserController {
     user.resetPasswordToken = code;
     user.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000);
     await this.userService.save(user);
-    await this.emailService.sendResetPassword(email, code); 
+    await this.emailService.sendResetPassword(email, code);
     return { message: 'Si el correo existe, se enviará un código de recuperación.' };
   }
 

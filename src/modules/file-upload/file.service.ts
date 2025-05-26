@@ -39,13 +39,6 @@ export class FileService {
     if (!file) {
       throw new NotFoundException(`File with ID ${fileId} not found`);
     }
-
-    // Obtener la URL base según el entorno
-    const baseUrl = this.configService.get('BASE_URL') ||
-      (process.env.NODE_ENV === 'production'
-        ? `https://${this.configService.get('RENDER_SERVICE_NAME')}.onrender.com`
-        : 'http://localhost:3000');
-
-    return `${baseUrl}/${file.path.replace(/\\/g, '/')}`;
+    return `${this.configService.get('BASE_URL') || 'http://localhost:3000'}/${file.path}`;
   }
 }

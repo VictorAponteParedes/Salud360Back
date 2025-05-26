@@ -9,12 +9,9 @@
             "runtimeArgs": [
                 "run",
                 "start:debug"
-            ],
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            ], // ← Usa ESTE
+            "port": 9229,
             "console": "integratedTerminal",
-            "restart": true,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
