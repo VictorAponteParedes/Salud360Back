@@ -42,5 +42,14 @@ export class CreateDoctorDto {
 
   @IsOptional()
   @IsArray()
-  patientIds?: number[]; 
+  patientIds?: number[];
+
+  @IsOptional()
+  @IsString()
+  hospitalId?: string;
+
+
+  @IsOptional()
+  @IsString()
+  profileImageId?: string;
 }
