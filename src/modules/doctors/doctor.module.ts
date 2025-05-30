@@ -6,13 +6,16 @@ import { Doctor } from './entities/doctors.entities';
 import { Specialty } from '../specialties/entities/specialty.entity';
 import { Lenguages } from '../lenguages/entities/lenguages.entities';
 import { User } from '../user/entities/user.entities';
+import { FileService } from '../file-upload/file.service';
+import { File } from '../file-upload/entities/file.entity';
+import { Hospital } from '../hospital/entities/hospital.entities';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Doctor, Specialty, Lenguages, User]),
+    TypeOrmModule.forFeature([Doctor, Specialty, Lenguages, User, File, Hospital]),
   ],
   controllers: [DoctorsController],
-  providers: [DoctorsService],
+  providers: [DoctorsService, FileService],
   exports: [DoctorsService],
 })
-export class DoctorsModule {}
+export class DoctorsModule { }
