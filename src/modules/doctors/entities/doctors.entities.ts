@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { Specialty } from '../../specialties/entities/specialty.entity';
 import { Lenguages } from 'src/modules/lenguages/entities/lenguages.entities';
 import { User } from 'src/modules/user/entities/user.entities';
 import { Hospital } from 'src/modules/hospital/entities/hospital.entities';
+import { File } from 'src/modules/file-upload/entities/file.entity';
 
 
 @Entity()
@@ -33,6 +34,10 @@ export class Doctor {
 
     @Column({ type: 'text', nullable: true })
     description: string;
+
+    @OneToOne(() => File, { nullable: true })
+    @JoinColumn()
+    profileImage: File;
 
     @ManyToMany(() => Specialty, specialty => specialty.doctors)
     @JoinTable()
