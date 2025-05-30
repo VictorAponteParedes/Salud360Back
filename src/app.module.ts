@@ -34,7 +34,7 @@ import { Hospital } from './modules/hospital/entities/hospital.entities';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, Doctor, Specialty, Lenguages, File, Hospital],
-      synchronize: process.env.NODE_ENV !== 'development',
+      synchronize: true,
 
       // ssl: true,
       // extra: {
