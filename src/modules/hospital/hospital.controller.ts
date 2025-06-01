@@ -1,29 +1,90 @@
-import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { HospitalService } from './hospital.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 
 @Controller('hospitals')
 export class HospitalController {
-  constructor(private readonly hospitalService: HospitalService) {}
+  constructor(private readonly hospitalService: HospitalService) { }
 
   @Post()
-  async create(@Body() createHospitalDto: CreateHospitalDto) {
-    return this.hospitalService.createHospital(createHospitalDto);
+  @HttpCode(HttpStatus.CREATED)
+  async createHospital(@Body() createHospitalDto: CreateHospitalDto) {
+    try {
+      if (!createHospitalDto || Object.keys(createHospitalDto).length === 0) {
+        throw new BadRequestException('Hospital data is required');
+      }
+
+      const hospital = await this.hospitalService.createHospital(createHospitalDto);
+      return {
+        message: 'Hospital created successfully',
+        data: hospital,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('An error occurred while creating the hospital');
+    }
   }
 
   @Get()
-  async findAll() {
-    return this.hospitalService.findAll();
+  @HttpCode(HttpStatus.OK)
+  async findAllHospitals() {
+    try {
+      const hospitals = await this.hospitalService.findAll();
+      return {
+        message: 'Hospitals retrieved successfully',
+        data: hospitals,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('An error occurred while retrieving hospitals');
+    }
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string) {
-    return this.hospitalService.findById(id);
+  @HttpCode(HttpStatus.OK)
+  async findHospitalById(@Param('id') id: string) {
+    try {
+      const hospital = await this.hospitalService.findById(id);
+
+      if (!hospital) {
+        throw new NotFoundException(`Hospital with ID ${id} not found`);
+      }
+
+      return {
+        message: 'Hospital retrieved successfully',
+        data: hospital,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    await this.hospitalService.remove(id);
-    return { message: 'Hospital eliminado correctamente' };
+  @HttpCode(HttpStatus.OK)
+  async removeHospital(@Param('id') id: string) {
+    try {
+      const hospital = await this.hospitalService.findById(id);
+
+      if (!hospital) {
+        throw new NotFoundException(`Hospital with ID ${id} not found`);
+      }
+
+      await this.hospitalService.remove(id);
+      return {
+        message: 'Hospital deleted successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('An error occurred while deleting the hospital');
+    }
   }
 }
