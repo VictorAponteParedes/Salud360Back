@@ -2,26 +2,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Lenguages } from './entities/lenguages.entities';
+import { Lenguage } from './entities/lenguages.entities';
 import { CreateLenguageDto } from './dto/create-lenguage.dto';
 
 @Injectable()
 export class LenguageService {
     constructor(
-        @InjectRepository(Lenguages)
-        private readonly lenguageRepository: Repository<Lenguages>,
+        @InjectRepository(Lenguage)
+        private readonly lenguageRepository: Repository<Lenguage>,
     ) { }
 
-    async create(createLenguageDto: CreateLenguageDto): Promise<Lenguages> {
+    async create(createLenguageDto: CreateLenguageDto): Promise<Lenguage> {
         const newLenguage = this.lenguageRepository.create(createLenguageDto);
         return await this.lenguageRepository.save(newLenguage);
     }
 
-    async findAll(): Promise<Lenguages[]> {
+    async findAll(): Promise<Lenguage[]> {
         return this.lenguageRepository.find();
     }
 
-    async findOne(id: string): Promise<Lenguages> {
+    async findOne(id: string): Promise<Lenguage> {
         return this.lenguageRepository.findOne({ where: { id } });
     }
 

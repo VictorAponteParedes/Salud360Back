@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from "t
 import { Doctor } from "src/modules/doctors/entities/doctors.entities";
 
 @Entity()
-export class Lenguages {
+export class Lenguage {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

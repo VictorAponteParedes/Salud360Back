@@ -17,7 +17,7 @@ import { HospitalModule } from './modules/hospital/hospital.module';
 import { User } from './modules/user/entities/user.entities';
 import { Doctor } from './modules/doctors/entities/doctors.entities';
 import { Specialty } from './modules/specialties/entities/specialty.entity';
-import { Lenguages } from './modules/lenguages/entities/lenguages.entities';
+import { Lenguage } from './modules/lenguages/entities/lenguages.entities';
 import { File } from './modules/file-upload/entities/file.entity';
 import { Hospital } from './modules/hospital/entities/hospital.entities';
 
@@ -33,7 +33,7 @@ import { Hospital } from './modules/hospital/entities/hospital.entities';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Doctor, Specialty, Lenguages, File, Hospital],
+      entities: [User, Doctor, Specialty, Lenguage, File, Hospital],
       synchronize: true,
 
       // ssl: true,

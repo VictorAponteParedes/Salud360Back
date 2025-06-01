@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Doctor } from './entities/doctors.entities';
 import { Specialty } from '../specialties/entities/specialty.entity';
-import { Lenguages } from '../lenguages/entities/lenguages.entities';
+import { Lenguage } from '../lenguages/entities/lenguages.entities';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { User } from '../user/entities/user.entities';
 import { FileService } from '../file-upload/file.service';
@@ -19,8 +19,8 @@ export class DoctorsService {
     private readonly hospitalRepository: Repository<Hospital>,
     @InjectRepository(Specialty)
     private readonly specialtyRepository: Repository<Specialty>,
-    @InjectRepository(Lenguages)
-    private readonly languageRepository: Repository<Lenguages>,
+    @InjectRepository(Lenguage)
+    private readonly languageRepository: Repository<Lenguage>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(File)
