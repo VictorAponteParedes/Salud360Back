@@ -46,7 +46,7 @@ export class CreateDoctorDto {
 
   @IsOptional()
   @IsString()
-  hospitalId?: string;
+  hospitalId?: string[];
 
 
   @IsOptional()

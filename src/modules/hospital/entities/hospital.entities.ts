@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn, ManyToMany } from "typeorm";
 import { Doctor } from "../../doctors/entities/doctors.entities";
 import { User } from "../../user/entities/user.entities";
 import { File } from "src/modules/file-upload/entities/file.entity";
@@ -34,9 +34,9 @@ export class Hospital {
 
     @OneToOne(() => File, { nullable: true })
     @JoinColumn()
-    hospitaImage: File;
+    hospitalImage: File;
 
-    @OneToMany(() => Doctor, doctor => doctor.hospital)
+    @ManyToMany(() => Doctor, doctor => doctor.hospitals)
     doctors: Doctor[];
 
     @OneToMany(() => User, user => user.hospital)

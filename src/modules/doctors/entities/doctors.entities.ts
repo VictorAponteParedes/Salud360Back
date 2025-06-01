@@ -52,8 +52,9 @@ export class Doctor {
     @JoinTable()
     patients: User[];
 
-    @ManyToOne(() => Hospital, hospital => hospital.doctors, { nullable: true })
-    hospital: Hospital;
+    @ManyToMany(() => Hospital, hospital => hospital.doctors, { nullable: true })
+    @JoinTable()
+    hospitals: Hospital[];
 
 
     get fullName(): string {
