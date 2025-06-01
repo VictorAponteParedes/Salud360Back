@@ -51,11 +51,11 @@ export class UserService {
     }
 
     async getUserById(id: string) {
-        return this.userRepository.findOne({ where: { id }, relations: ['doctors', 'hospital'] })
+        return this.userRepository.findOne({ where: { id }, relations: ['doctors', 'hospital', 'profileImage'] })
     }
 
     async getAllUsers() {
-        return this.userRepository.find({ relations: ['doctors', 'hospital'] })
+        return this.userRepository.find({ relations: ['doctors', 'hospital', 'profileImage'] })
     }
 
     async findByEmail(email: string): Promise<User | undefined> {
