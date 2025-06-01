@@ -79,11 +79,14 @@ export class DoctorsService {
       }
     }
 
-    let hospital = null;
-    if (createDoctorDto.hospitalId) {
-      hospital = await this.hospitalRepository.findOneBy({ id: createDoctorDto.hospitalId });
-      if (!hospital) {
-        throw new NotFoundException('Hospital no encontrado');
+    let hospitals = [];
+    if (createDoctorDto.hospitalId && createDoctorDto.hospitalId.length > 0) {
+      hospitals = await this.hospitalRepository.findBy({
+        id: In(createDoctorDto.hospitalId),
+      });
+
+      if (hospitals.length !== createDoctorDto.hospitalId.length) {
+        throw new NotFoundException('Uno o más hospitales no existen');
       }
     }
 
@@ -95,7 +98,7 @@ export class DoctorsService {
       languages,
       patients: users,
       profileImage,
-      hospital,
+      hospitals,
     });
 
     return this.doctorRepository.save(doctor);
