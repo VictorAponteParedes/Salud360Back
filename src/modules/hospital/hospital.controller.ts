@@ -46,10 +46,10 @@ export class HospitalController {
         data: hospitals,
       };
     } catch (error) {
+      console.error('Error fetching hospitals:', error);  // <-- Añade esto para ver el error real
       throw new InternalServerErrorException('An error occurred while retrieving hospitals');
     }
   }
-
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findHospitalById(@Param('id') id: string) {

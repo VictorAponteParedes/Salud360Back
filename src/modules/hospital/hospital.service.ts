@@ -15,23 +15,23 @@ export class HospitalService {
         @InjectRepository(File)
         private fileRepository: Repository<File>,
         private fileService: FileService
-    ) {}
+    ) { }
 
     async createHospital(createHospitalDto: CreateHospitalDto): Promise<Hospital> {
         try {
             const { hospitaImageId, ...rest } = createHospitalDto;
-            let hospitaImage: File | undefined;
+            let hospitalImage: File | undefined;
 
             if (hospitaImageId) {
-                hospitaImage = await this.fileRepository.findOneBy({ id: hospitaImageId });
-                if (!hospitaImage) {
+                hospitalImage = await this.fileRepository.findOneBy({ id: hospitaImageId });
+                if (!hospitalImage) {
                     throw new NotFoundException('Imagen no encontrada');
                 }
             }
 
             const hospital = this.hospitalRepository.create({
                 ...rest,
-                hospitaImage,
+                hospitalImage,
             });
 
             return await this.hospitalRepository.save(hospital);
@@ -40,8 +40,9 @@ export class HospitalService {
         }
     }
 
+
     async findAll(): Promise<Hospital[]> {
-        return this.hospitalRepository.find({ relations: ['hospitaImage', 'doctors', 'patients'] });
+        return this.hospitalRepository.find({ relations: ['hospitalImage', 'doctors', 'patients'] });
     }
 
     async findById(id: string): Promise<Hospital | null> {
