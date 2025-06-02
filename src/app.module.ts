@@ -20,6 +20,7 @@ import { Specialty } from './modules/specialties/entities/specialty.entity';
 import { Lenguage } from './modules/lenguages/entities/lenguages.entities';
 import { File } from './modules/file-upload/entities/file.entity';
 import { Hospital } from './modules/hospital/entities/hospital.entities';
+import { Schedule } from './modules/schedule/entities/schedule.entity';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { Hospital } from './modules/hospital/entities/hospital.entities';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Doctor, Specialty, Lenguage, File, Hospital],
+      entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule],
       synchronize: true,
 
       // ssl: true,
