@@ -11,6 +11,7 @@ import { File } from '../file-upload/entities/file.entity';
 import { Hospital } from '../hospital/entities/hospital.entities';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { ScheduleDto } from '../schedule/dto/create-schedule.dto';
+import { WeekDay } from '../schedule/enum/weekDay';
 
 @Injectable()
 export class DoctorsService {
@@ -90,14 +91,33 @@ export class DoctorsService {
       }
 
       // Validación y creación de horarios
-      let schedules: Schedule[] = [];
+  let schedules: Schedule[] = [];
       if (createDoctorDto.scheduleDtos && createDoctorDto.scheduleDtos.length > 0) {
-        schedules = createDoctorDto.scheduleDtos.map((scheduleDto: ScheduleDto) => {
+        const validDays = Object.values(WeekDay);
+
+        schedules = createDoctorDto.scheduleDtos.map((scheduleDto: ScheduleDto, index: number) => {
+
           if (!scheduleDto.day || !scheduleDto.startTime || !scheduleDto.endTime) {
-            throw new BadRequestException('Faltan datos requeridos para el horario');
+            throw new BadRequestException(`Faltan datos requeridos para el horario en la posición ${index}`);
           }
+          // Normalizar el valor de day a minúsculas
+          const normalizedDay = scheduleDto.day.toLowerCase();
+
+          // Validar que el día sea un valor válido del enum
+          if (!validDays.includes(normalizedDay as WeekDay)) {
+            throw new BadRequestException(
+              `El día "${scheduleDto.day}" en la posición ${index} no es válido. Debe ser uno de: ${validDays.join(', ')}`
+            );
+          }
+
+          // Validar formato de las horas
+          const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+          if (!timeRegex.test(scheduleDto.startTime) || !timeRegex.test(scheduleDto.endTime)) {
+            throw new BadRequestException(`Formato de hora inválido en la posición ${index}`);
+          }
+
           return this.scheduleRepository.create({
-            day: scheduleDto.day,
+            day: normalizedDay as WeekDay,
             startTime: scheduleDto.startTime,
             endTime: scheduleDto.endTime,
           });
