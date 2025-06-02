@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Schedule } from './entities/schedule.entity';
@@ -7,30 +7,86 @@ import { Schedule } from './entities/schedule.entity';
 export class ScheduleService {
   constructor(
     @InjectRepository(Schedule)
-    private scheduleRepository: Repository<Schedule>,
+    private readonly scheduleRepository: Repository<Schedule>,
   ) {}
 
-  findAll(): Promise<Schedule[]> {
-    return this.scheduleRepository.find();
+  async findAll(): Promise<Schedule[]> {
+    try {
+      const schedules = await this.scheduleRepository.find();
+      return schedules;
+    } catch (error) {
+      throw new BadRequestException('Error al obtener los horarios');
+    }
   }
 
-  findByDoctorId(doctorId: string): Promise<Schedule[]> {
-    return this.scheduleRepository.find({
-      where: { doctor: { id: doctorId } },
-    });
+  async findByDoctorId(doctorId: string): Promise<Schedule[]> {
+    try {
+      if (!doctorId) {
+        throw new BadRequestException('El ID del doctor es requerido');
+      }
+      const schedules = await this.scheduleRepository.find({
+        where: { doctor: { id: doctorId } },
+      });
+      return schedules;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al obtener los horarios del doctor');
+    }
   }
 
-  create(schedule: Partial<Schedule>): Promise<Schedule> {
-    const newSchedule = this.scheduleRepository.create(schedule);
-    return this.scheduleRepository.save(newSchedule);
+  async create(schedule: Partial<Schedule>): Promise<Schedule> {
+    try {
+      if (!schedule.day || !schedule.startTime || !schedule.endTime || !schedule.doctor) {
+        throw new BadRequestException('Faltan datos requeridos para crear el horario');
+      }
+      const newSchedule = this.scheduleRepository.create(schedule);
+      const savedSchedule = await this.scheduleRepository.save(newSchedule);
+      return savedSchedule;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al crear el horario');
+    }
   }
 
   async update(id: string, schedule: Partial<Schedule>): Promise<Schedule> {
-    await this.scheduleRepository.update(id, schedule);
-    return this.scheduleRepository.findOneBy({ id });
+    try {
+      if (!id) {
+        throw new BadRequestException('El ID del horario es requerido');
+      }
+      const existingSchedule = await this.scheduleRepository.findOneBy({ id });
+      if (!existingSchedule) {
+        throw new NotFoundException(`Horario con ID ${id} no encontrado`);
+      }
+      await this.scheduleRepository.update(id, schedule);
+      const updatedSchedule = await this.scheduleRepository.findOneBy({ id });
+      return updatedSchedule;
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al actualizar el horario');
+    }
   }
 
   async remove(id: string): Promise<void> {
-    await this.scheduleRepository.delete(id);
+    try {
+      if (!id) {
+        throw new BadRequestException('El ID del horario es requerido');
+      }
+      const existingSchedule = await this.scheduleRepository.findOneBy({ id });
+      if (!existingSchedule) {
+        throw new NotFoundException(`Horario con ID ${id} no encontrado`);
+      }
+      await this.scheduleRepository.delete(id);
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al eliminar el horario');
+    }
   }
 }
