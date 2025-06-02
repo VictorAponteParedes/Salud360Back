@@ -58,7 +58,7 @@ export class Doctor {
         cascade: true, 
         eager: true,   
     })
-  schedules: Schedule[];
+   schedules: Schedule[];
 
 
     get fullName(): string {

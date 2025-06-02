@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Doctor } from './entities/doctors.entities';
@@ -9,6 +9,8 @@ import { User } from '../user/entities/user.entities';
 import { FileService } from '../file-upload/file.service';
 import { File } from '../file-upload/entities/file.entity';
 import { Hospital } from '../hospital/entities/hospital.entities';
+import { Schedule } from '../schedule/entities/schedule.entity';
+import { ScheduleDto } from '../schedule/dto/create-schedule.dto';
 
 @Injectable()
 export class DoctorsService {
@@ -24,108 +26,153 @@ export class DoctorsService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(File)
-    private fileRepository: Repository<File>,
-    private fileService: FileService
+    private readonly fileRepository: Repository<File>,
+    @InjectRepository(Schedule)
+    private readonly scheduleRepository: Repository<Schedule>,
+    private readonly fileService: FileService
   ) { }
 
   async create(createDoctorDto: CreateDoctorDto, profileImageFile?: Express.Multer.File) {
-    // Validación de especialidades
-    let specialties = [];
-    if (createDoctorDto.specialtyIds && createDoctorDto.specialtyIds.length > 0) {
-      specialties = await this.specialtyRepository.findBy({
-        id: In(createDoctorDto.specialtyIds),
+    try {
+      // Validación de especialidades
+      let specialties = [];
+      if (createDoctorDto.specialtyIds && createDoctorDto.specialtyIds.length > 0) {
+        specialties = await this.specialtyRepository.findBy({
+          id: In(createDoctorDto.specialtyIds),
+        });
+        if (specialties.length !== createDoctorDto.specialtyIds.length) {
+          throw new NotFoundException('Una o más especialidades no existen');
+        }
+      }
+
+      // Validación de idiomas
+      let languages = [];
+      if (createDoctorDto.languageIds && createDoctorDto.languageIds.length > 0) {
+        languages = await this.languageRepository.findBy({
+          id: In(createDoctorDto.languageIds),
+        });
+        if (languages.length !== createDoctorDto.languageIds.length) {
+          throw new NotFoundException('Uno o más lenguajes no existen');
+        }
+      }
+
+      // Manejo de la imagen de perfil
+      let profileImage: File | null = null;
+      if (profileImageFile) {
+        profileImage = await this.fileService.saveFile(profileImageFile);
+      } else if (createDoctorDto.profileImageId) {
+        profileImage = await this.fileRepository.findOneBy({ id: createDoctorDto.profileImageId });
+        if (!profileImage) {
+          throw new NotFoundException('Imagen de perfil no encontrada');
+        }
+      }
+
+      // Validación de pacientes
+      let patients = [];
+      if (createDoctorDto.patientIds && createDoctorDto.patientIds.length > 0) {
+        patients = await this.userRepository.findBy({
+          id: In(createDoctorDto.patientIds),
+        });
+        if (patients.length !== createDoctorDto.patientIds.length) {
+          throw new NotFoundException('Uno o más pacientes no existen');
+        }
+      }
+
+      // Validación de hospitales
+      let hospitals = [];
+      if (createDoctorDto.hospitalId && createDoctorDto.hospitalId.length > 0) {
+        hospitals = await this.hospitalRepository.findBy({
+          id: In(createDoctorDto.hospitalId),
+        });
+        if (hospitals.length !== createDoctorDto.hospitalId.length) {
+          throw new NotFoundException('Uno o más hospitales no existen');
+        }
+      }
+
+      // Validación y creación de horarios
+      let schedules: Schedule[] = [];
+      if (createDoctorDto.scheduleDtos && createDoctorDto.scheduleDtos.length > 0) {
+        schedules = createDoctorDto.scheduleDtos.map((scheduleDto: ScheduleDto) => {
+          if (!scheduleDto.day || !scheduleDto.startTime || !scheduleDto.endTime) {
+            throw new BadRequestException('Faltan datos requeridos para el horario');
+          }
+          return this.scheduleRepository.create({
+            day: scheduleDto.day,
+            startTime: scheduleDto.startTime,
+            endTime: scheduleDto.endTime,
+          });
+        });
+      }
+
+      // Creación del doctor
+      const doctor = this.doctorRepository.create({
+        ...createDoctorDto,
+        specialties,
+        languages,
+        patients,
+        profileImage,
+        hospitals,
+        schedules,
       });
 
-      if (specialties.length !== createDoctorDto.specialtyIds.length) {
-        throw new NotFoundException('Una o más especialidades no existen');
+      // Guardar el doctor con los horarios
+      const savedDoctor = await this.doctorRepository.save(doctor);
+      return savedDoctor;
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
       }
+      throw new BadRequestException('Error al crear el doctor');
     }
-
-    // Validación de idiomas
-    let languages = [];
-    if (createDoctorDto.languageIds && createDoctorDto.languageIds.length > 0) {
-      languages = await this.languageRepository.findBy({
-        id: In(createDoctorDto.languageIds),
-      });
-
-      if (languages.length !== createDoctorDto.languageIds.length) {
-        throw new NotFoundException('Uno o más lenguajes no existen');
-      }
-    }
-
-
-    // Manejo de la imagen de perfil
-    let profileImage: File | null = null;
-    if (profileImageFile) {
-      // Subir nueva imagen
-      profileImage = await this.fileService.saveFile(profileImageFile);
-    } else if (createDoctorDto.profileImageId) {
-      // Usar imagen existente
-      profileImage = await this.fileRepository.findOneBy({ id: createDoctorDto.profileImageId });
-      if (!profileImage) {
-        throw new NotFoundException('Imagen de perfil no encontrada');
-      }
-    }
-
-    // Validación de pacientes (si existen)
-    let users = [];
-    if (createDoctorDto.patientIds && createDoctorDto.patientIds.length > 0) {
-      users = await this.userRepository.findBy({
-        id: In(createDoctorDto.patientIds),
-      });
-
-      if (users.length !== createDoctorDto.patientIds.length) {
-        throw new NotFoundException('Uno o más pacientes no existen');
-      }
-    }
-
-    let hospitals = [];
-    if (createDoctorDto.hospitalId && createDoctorDto.hospitalId.length > 0) {
-      hospitals = await this.hospitalRepository.findBy({
-        id: In(createDoctorDto.hospitalId),
-      });
-
-      if (hospitals.length !== createDoctorDto.hospitalId.length) {
-        throw new NotFoundException('Uno o más hospitales no existen');
-      }
-    }
-
-
-    // Creación del doctor
-    const doctor = this.doctorRepository.create({
-      ...createDoctorDto,
-      specialties,
-      languages,
-      patients: users,
-      profileImage,
-      hospitals,
-    });
-
-    return this.doctorRepository.save(doctor);
   }
 
   async findAll() {
-    return this.doctorRepository.find({
-      relations: ['specialties', 'languages', 'patients', 'profileImage'],
-    });
+    try {
+      const doctors = await this.doctorRepository.find({
+        relations: ['specialties', 'languages', 'patients', 'profileImage', 'hospitals', 'schedules'],
+      });
+      return doctors;
+    } catch (error) {
+      throw new BadRequestException('Error al obtener los doctores');
+    }
   }
 
   async findOne(id: string) {
-    const doctor = await this.doctorRepository.findOne({
-      where: { id },
-      relations: ['specialties', 'languages', 'profileImage', 'patients', 'hospital'],
-    });
-
-    if (!doctor) {
-      throw new NotFoundException(`Doctor con ID ${id} no encontrado`);
+    try {
+      if (!id) {
+        throw new BadRequestException('El ID del doctor es requerido');
+      }
+      const doctor = await this.doctorRepository.findOne({
+        where: { id },
+        relations: ['specialties', 'languages', 'profileImage', 'patients', 'hospitals', 'schedules'],
+      });
+      if (!doctor) {
+        throw new NotFoundException(`Doctor con ID ${id} no encontrado`);
+      }
+      return doctor;
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al obtener el doctor');
     }
-
-    return doctor;
   }
+
   async findById(id: string): Promise<Doctor | null> {
-    return this.doctorRepository.findOne({
-      where: { id },
-      relations: ['profileImage']
-    });
+    try {
+      if (!id) {
+        throw new BadRequestException('El ID del doctor es requerido');
+      }
+      const doctor = await this.doctorRepository.findOne({
+        where: { id },
+        relations: ['profileImage', 'schedules'],
+      });
+      return doctor;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al obtener el doctor');
+    }
   }
 }

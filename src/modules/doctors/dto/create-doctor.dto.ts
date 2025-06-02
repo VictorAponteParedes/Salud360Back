@@ -1,5 +1,6 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString, IsNumber, IsDecimal } from '@nestjs/class-validator';
-
+import { IsArray, IsNotEmpty, IsOptional, IsString, IsNumber, IsDecimal, ValidateNested } from '@nestjs/class-validator';
+import { ScheduleDto } from 'src/modules/schedule/dto/create-schedule.dto';
+import { Type } from 'class-transformer';
 
 export class CreateDoctorDto {
   @IsNotEmpty()
@@ -52,4 +53,10 @@ export class CreateDoctorDto {
   @IsOptional()
   @IsString()
   profileImageId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ScheduleDto)
+  scheduleDtos?: ScheduleDto[];
 }
