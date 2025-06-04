@@ -12,6 +12,7 @@ import { SpecialtyModule } from './modules/specialties/specialty.module';
 import { DoctorsModule } from './modules/doctors/doctor.module';
 import { UploadModule } from './modules/file-upload/file.module';
 import { HospitalModule } from './modules/hospital/hospital.module';
+import { AnalysisModule } from './modules/analysis/analysis.module';
 
 // Entities
 import { User } from './modules/user/entities/user.entities';
@@ -21,6 +22,7 @@ import { Lenguage } from './modules/lenguages/entities/lenguages.entities';
 import { File } from './modules/file-upload/entities/file.entity';
 import { Hospital } from './modules/hospital/entities/hospital.entities';
 import { Schedule } from './modules/schedule/entities/schedule.entity';
+import { Analysis } from './modules/analysis/entities/analysis.entities';
 
 @Module({
   imports: [
@@ -34,7 +36,7 @@ import { Schedule } from './modules/schedule/entities/schedule.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule],
+      entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule, Analysis],
       synchronize: true,
 
       // ssl: true,
@@ -50,7 +52,8 @@ import { Schedule } from './modules/schedule/entities/schedule.entity';
     SpecialtyModule,
     DoctorsModule,
     UploadModule,
-    HospitalModule
+    HospitalModule,
+    AnalysisModule
   ],
   controllers: [AppController],
   providers: [AppService],
