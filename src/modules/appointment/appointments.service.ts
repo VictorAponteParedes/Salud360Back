@@ -47,4 +47,36 @@ export class AppointmentsService {
             throw new InternalServerErrorException('No se pudo crear la cita');
         }
     }
+
+
+    async findById(id: string): Promise<Appointment> {
+        try {
+            const appointment = await this.appointmentRepository.findOne({
+                where: { id },
+                relations: ['doctor', 'patient'], // Asegúrate de cargar relaciones si las necesitas
+            });
+
+            if (!appointment) {
+                throw new NotFoundException(`Cita con ID ${id} no encontrada`);
+            }
+
+            return appointment;
+        } catch (error) {
+            console.error('Error al obtener la cita por ID:', error);
+            throw new InternalServerErrorException('No se pudo obtener la cita');
+        }
+    }
+
+
+    async findAll(): Promise<Appointment[]> {
+        try {
+            return await this.appointmentRepository.find({
+                relations: ['doctor', 'patient'],
+                order: { appointmentDate: 'DESC' },
+            });
+        } catch (error) {
+            console.error('Error al obtener todas las citas:', error);
+            throw new InternalServerErrorException('No se pudieron obtener las citas');
+        }
+    }
 }
