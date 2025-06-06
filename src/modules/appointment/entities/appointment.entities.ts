@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    CreateDateColumn,
+} from 'typeorm';
 import { Doctor } from 'src/modules/doctors/entities/doctors.entities';
 import { User } from 'src/modules/user/entities/user.entities';
 
@@ -13,8 +19,11 @@ export class Appointment {
     @ManyToOne(() => User, user => user.id)
     patient: User;
 
-    @Column()
-    appointmentDate: Date;
+    @Column({ type: 'date' })
+    appointmentDate: string; // Solo la fecha (YYYY-MM-DD)
+
+    @Column({ type: 'time' })
+    appointmentTime: string; // Solo la hora (HH:MM:SS)
 
     @Column()
     reason: string;

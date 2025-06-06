@@ -21,7 +21,14 @@ export class AppointmentsService {
 
     async create(createAppointmentDto: CreateAppointmentDto): Promise<Appointment> {
         try {
-            const { doctorId, patientId, appointmentDate, reason, notes } = createAppointmentDto;
+            const {
+                doctorId,
+                patientId,
+                appointmentDate,
+                appointmentTime,
+                reason,
+                notes,
+            } = createAppointmentDto;
 
             const doctor = await this.doctorRepository.findOne({ where: { id: doctorId } });
             if (!doctor) {
@@ -36,7 +43,8 @@ export class AppointmentsService {
             const appointment = this.appointmentRepository.create({
                 doctor,
                 patient,
-                appointmentDate: new Date(appointmentDate),
+                appointmentDate,
+                appointmentTime,
                 reason,
                 notes,
             });
@@ -47,6 +55,8 @@ export class AppointmentsService {
             throw new InternalServerErrorException('No se pudo crear la cita');
         }
     }
+
+
 
 
     async findById(id: string): Promise<Appointment> {
