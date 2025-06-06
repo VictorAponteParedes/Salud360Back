@@ -13,6 +13,7 @@ import { DoctorsModule } from './modules/doctors/doctor.module';
 import { UploadModule } from './modules/file-upload/file.module';
 import { HospitalModule } from './modules/hospital/hospital.module';
 import { AnalysisModule } from './modules/analysis/analysis.module';
+import { AppointmentsModule } from './modules/appointment/appointments.module';
 
 // Entities
 import { User } from './modules/user/entities/user.entities';
@@ -23,6 +24,7 @@ import { File } from './modules/file-upload/entities/file.entity';
 import { Hospital } from './modules/hospital/entities/hospital.entities';
 import { Schedule } from './modules/schedule/entities/schedule.entity';
 import { Analysis } from './modules/analysis/entities/analysis.entities';
+import { Appointment } from './modules/appointment/entities/appointment.entities';
 
 @Module({
   imports: [
@@ -36,7 +38,7 @@ import { Analysis } from './modules/analysis/entities/analysis.entities';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule, Analysis],
+      entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule, Analysis, Appointment],
       synchronize: true,
 
       // ssl: true,
@@ -53,7 +55,8 @@ import { Analysis } from './modules/analysis/entities/analysis.entities';
     DoctorsModule,
     UploadModule,
     HospitalModule,
-    AnalysisModule
+    AnalysisModule,
+    AppointmentsModule
   ],
   controllers: [AppController],
   providers: [AppService],
