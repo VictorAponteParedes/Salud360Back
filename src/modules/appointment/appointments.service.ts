@@ -63,7 +63,7 @@ export class AppointmentsService {
         try {
             const appointment = await this.appointmentRepository.findOne({
                 where: { id },
-                relations: ['doctor', 'patient'], // Asegúrate de cargar relaciones si las necesitas
+                relations: ['doctor', 'patient'],
             });
 
             if (!appointment) {
@@ -77,11 +77,32 @@ export class AppointmentsService {
         }
     }
 
+    async findByPatientId(patientId: string): Promise<Appointment[]> {
+        try {
+            const patient = await this.userRepository.findOne({ where: { id: patientId } });
+            if (!patient) {
+                throw new NotFoundException(`Paciente con ID ${patientId} no encontrado`);
+            }
+
+            const appointments = await this.appointmentRepository.find({
+                where: { patient: { id: patientId } },
+                relations: ['doctor', 'doctor.profileImage', 'patient'],
+                order: { appointmentDate: 'DESC' },
+            });
+
+            return appointments;
+        } catch (error) {
+            console.error('Error al obtener las citas del paciente:', error);
+            throw new InternalServerErrorException('No se pudieron obtener las citas del paciente');
+        }
+    }
+
+
 
     async findAll(): Promise<Appointment[]> {
         try {
             return await this.appointmentRepository.find({
-                relations: ['doctor', 'patient'],
+                relations: ['doctor', 'patient', 'doctor.profileImage'],
                 order: { appointmentDate: 'DESC' },
             });
         } catch (error) {

@@ -57,4 +57,17 @@ export class AppointmentsController {
             });
         }
     }
+    @Get('patient/:patientId')
+    async findByPatient(@Param('patientId') patientId: string, @Res() res: Response) {
+        try {
+            const appointments = await this.appointmentsService.findByPatientId(patientId);
+            return res.status(HttpStatus.OK).json(appointments);
+        } catch (error) {
+            console.error(`Error al obtener citas para paciente ${patientId}:`, error);
+            return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: error.message || 'No se pudieron obtener las citas del paciente',
+            });
+        }
+    }
+
 }
