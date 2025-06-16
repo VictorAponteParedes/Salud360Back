@@ -19,7 +19,7 @@ export class SpecialtyService {
     }
 
     findAllSpecialty() {
-        return this.specialtyRepository.find({ relations: ['doctors'] })
+        return this.specialtyRepository.find({ relations: ['doctors', 'doctors.profileImage'] })
     }
 
     findOne(id: string) {

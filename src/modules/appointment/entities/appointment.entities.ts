@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Doctor } from 'src/modules/doctors/entities/doctors.entities';
 import { User } from 'src/modules/user/entities/user.entities';
+import { StatusAppointment } from '../enums/status-appointment.enum';
 
 @Entity()
 export class Appointment {
@@ -33,4 +34,11 @@ export class Appointment {
 
     @CreateDateColumn()
     createdAt: Date;
+
+    @Column({
+        type: 'enum',
+        enum: StatusAppointment,
+        default: StatusAppointment.PENDING
+    })
+    status: StatusAppointment;
 }
