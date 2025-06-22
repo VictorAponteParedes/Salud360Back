@@ -44,4 +44,10 @@ export class Hospital {
 
     @Column({ default: true })
     status: boolean;
+
+    @Column("decimal", { precision: 10, scale: 6, nullable: true })
+    latitude: number;
+
+    @Column("decimal", { precision: 10, scale: 6, nullable: true })
+    longitude: number;
 }
