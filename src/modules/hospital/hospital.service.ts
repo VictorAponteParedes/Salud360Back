@@ -51,7 +51,7 @@ export class HospitalService {
     async findById(id: string): Promise<Hospital | null> {
         return this.hospitalRepository.findOne({
             where: { id },
-            relations: ['hospitaImage', 'doctors', 'patients'],
+            relations: ['hospitalImage', 'doctors', 'patients'],
         });
     }
 
