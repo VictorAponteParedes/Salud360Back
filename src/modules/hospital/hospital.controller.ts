@@ -10,9 +10,12 @@ import {
   NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { HospitalService } from './hospital.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('hospitals')
 export class HospitalController {
@@ -20,13 +23,14 @@ export class HospitalController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createHospital(@Body() createHospitalDto: CreateHospitalDto) {
+  @UseInterceptors(FileInterceptor('file'))
+  async createHospital(@Body() createHospitalDto: CreateHospitalDto, @UploadedFile() file: Express.Multer.File,) {
     try {
       if (!createHospitalDto || Object.keys(createHospitalDto).length === 0) {
         throw new BadRequestException('Hospital data is required');
       }
 
-      const hospital = await this.hospitalService.createHospital(createHospitalDto);
+      const hospital = await this.hospitalService.createHospital(createHospitalDto, file);
       return {
         message: 'Hospital created successfully',
         data: hospital,
