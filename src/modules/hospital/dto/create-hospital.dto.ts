@@ -30,7 +30,7 @@ export class CreateHospitalDto {
 
   @IsOptional()
   @IsString()
-  hospitaImageId?: string;
+  hospitalImageId?: string;
 
   @IsOptional()
   @IsBoolean()
