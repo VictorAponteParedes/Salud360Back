@@ -17,16 +17,19 @@ export class HospitalService {
         private fileService: FileService
     ) { }
 
-    async createHospital(createHospitalDto: CreateHospitalDto): Promise<Hospital> {
+    async createHospital(createHospitalDto: CreateHospitalDto, profileImageFile?: Express.Multer.File): Promise<Hospital> {
         try {
-            const { hospitaImageId, ...rest } = createHospitalDto;
+            const { hospitalImageId, ...rest } = createHospitalDto;
             let hospitalImage: File | undefined;
 
-            if (hospitaImageId) {
-                hospitalImage = await this.fileRepository.findOneBy({ id: hospitaImageId });
+            if (hospitalImageId) {
+                hospitalImage = await this.fileRepository.findOneBy({ id: hospitalImageId });
                 if (!hospitalImage) {
                     throw new NotFoundException('Imagen no encontrada');
                 }
+            }
+            else if (profileImageFile) {
+                hospitalImage = await this.fileService.saveFile(profileImageFile);
             }
 
             const hospital = this.hospitalRepository.create({
