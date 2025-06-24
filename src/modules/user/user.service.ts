@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { FileService } from "../file-upload/file.service";
 import { File } from "../file-upload/entities/file.entity";
 import { ChangePasswordDto } from "./dto/change-password.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UserService {
@@ -64,6 +65,15 @@ export class UserService {
             relations: ['profileImage']
         });
     }
+
+    async updateUser(id: string, updateUserDto: UpdateUserDto) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) throw new NotFoundException('Usuario no encontrado');
+
+        Object.assign(user, updateUserDto);
+        return this.userRepository.save(user);
+    }
+
 
     async updateProfileImage(userId: string, file: Express.Multer.File) {
         const user = await this.userRepository.findOne({

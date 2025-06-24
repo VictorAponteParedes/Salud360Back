@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param, Patch, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param, Patch, UseGuards, Req, BadRequestException, Put } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { EmailService } from '../Email/email.service';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
 @Controller('users')
 export class UserController {
   constructor(
@@ -85,6 +86,15 @@ export class UserController {
     user.resetPasswordExpires = null;
     await this.userService.save(user);
     return { message: 'Contraseña restablecida correctamente' };
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
+    async updateUser(
+      @Param('id') id: string,
+      @Body() updateUserDto: UpdateUserDto
+    ) {
+      return this.userService.updateUser(id, updateUserDto);
   }
 
 }
