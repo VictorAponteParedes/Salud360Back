@@ -29,15 +29,17 @@ export class InformationCardController {
         @UploadedFile() file?: Express.Multer.File,
     ) {
         try {
-            console.log('Received file:', file);
-            if (!file) {
-                throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
-            }
             const created = await this.service.create(dto, file);
-            return { message: 'Tarjeta creada correctamente', data: created };
+            return {
+                message: 'Tarjeta creada correctamente',
+                data: created
+            };
         } catch (error) {
-            console.error('Error in controller:', error);
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            console.error('Error completo:', error);
+            throw new HttpException(
+                error.message || 'Error al crear tarjeta',
+                error.status || HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
