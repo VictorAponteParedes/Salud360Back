@@ -18,17 +18,21 @@ export class FileService {
   async saveFile(file: Express.Multer.File): Promise<File> {
     const fileExtension = extname(file.originalname);
     const uniqueFilename = `${uuidv4()}${fileExtension}`;
-    const filePath = `uploads/${uniqueFilename}`;
+    const finalPath = `uploads/${uniqueFilename}`;
 
-    // Mover el archivo a la carpeta uploads
-    await fs.rename(file.path, filePath);
+    if (!file.path) {
+      throw new Error("El archivo no tiene una ruta temporal definida (file.path)");
+    }
+
+    // Mover archivo desde path temporal a path final
+    await fs.rename(file.path, finalPath);
 
     const newFile = this.fileRepository.create({
       filename: uniqueFilename,
       originalname: file.originalname,
       mimetype: file.mimetype,
       size: file.size,
-      path: filePath.replace(/\\/g, '/'),
+      path: finalPath.replace(/\\/g, '/'),
     });
 
     return this.fileRepository.save(newFile);
