@@ -17,6 +17,9 @@ export class InformationCard {
     @JoinColumn()
     serviceImage: File;
 
+    @Column({ default: true })
+    isActive: boolean;
+
     @Column({ nullable: true })
     screen: string;
 

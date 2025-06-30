@@ -52,6 +52,15 @@ export class InformationCardController {
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @Get('active')
+    async findAllActive() {
+        try {
+            const cards = await this.service.findAllActive();
+            return { data: cards };
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Get(':id')
     async findOne(@Param('id') id: string) {
@@ -85,4 +94,21 @@ export class InformationCardController {
             throw new HttpException(error.message, status);
         }
     }
+
+
+    @Put(':id/status/:status')
+    async updateStatus(
+        @Param('id') id: string,
+        @Param('status') status: string
+    ) {
+        try {
+            const statusBool = status === 'true';
+            const result = await this.service.setActiveStatus(id, statusBool);
+            return result;
+        } catch (error) {
+            const statusCode = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+            throw new HttpException(error.message, statusCode);
+        }
+    }
+
 }

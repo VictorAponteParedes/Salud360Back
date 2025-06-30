@@ -113,4 +113,32 @@ export class InformationCardService {
             throw new InternalServerErrorException('Error al eliminar la tarjeta informativa.');
         }
     }
+
+    async findAllActive() {
+        try {
+            return await this.cardRepository.find({
+                where: { isActive: true },
+                relations: ['serviceImage'],
+            });
+        } catch (error) {
+            throw new InternalServerErrorException('Error al obtener las tarjetas activas.');
+        }
+    }
+
+    async setActiveStatus(id: string, status: boolean) {
+        try {
+            const result = await this.cardRepository.update(id, { isActive: status });
+
+            if (result.affected === 0) {
+                throw new NotFoundException(`No se encontró la tarjeta informativa con ID: ${id}`);
+            }
+
+            return {
+                message: `Tarjeta informativa ${status ? 'activada' : 'desactivada'} correctamente.`,
+            };
+        } catch (error) {
+            throw new InternalServerErrorException('Error al cambiar el estado de la tarjeta.');
+        }
+    }
+
 }
