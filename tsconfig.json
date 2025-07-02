@@ -13,7 +13,6 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["node", "express", "multer"],
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
