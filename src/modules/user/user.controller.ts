@@ -8,6 +8,9 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { EmailService } from '../Email/email.service';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import type { Express } from 'express';
+
+
 @Controller('users')
 export class UserController {
   constructor(
