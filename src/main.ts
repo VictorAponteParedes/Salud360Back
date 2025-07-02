@@ -19,7 +19,7 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
-  await app.listen(configService.get('PORT'));
+  await app.listen(process.env.PORT || configService.get('PORT') || 3000);
   console.log(`🚀 App running on ${configService.get('BASE_URL') || 'http://localhost'}:${configService.get('PORT')}`);
 }
 bootstrap();
