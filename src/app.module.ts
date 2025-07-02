@@ -42,13 +42,12 @@ import { InformationCard } from './modules/serviceInfoCard/entities/service-info
       database: process.env.DB_DATABASE,
       entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule, Analysis, Appointment, InformationCard],
       synchronize: true,
-
-      // ssl: true,
-      // extra: {
-      //   ssl: {
-      //     rejectUnauthorized: false  // Necesario para la conexión SSL
-      //   }
-      // }
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false
+        }
+      }
     }),
     UserModule,
     AuthModule,
