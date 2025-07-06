@@ -16,6 +16,7 @@ import { InformationCardService } from './information-card.service';
 import { CreateInformationCardDto } from './dto/create-information-card.dto';
 import { UpdateInformationCardDto } from './dto/update-information-card.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import type { Express } from 'express';
 
 @Controller('information-cards')
 export class InformationCardController {

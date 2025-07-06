@@ -6,6 +6,7 @@ import { CreateInformationCardDto } from './dto/create-information-card.dto';
 import { UpdateInformationCardDto } from './dto/update-information-card.dto';
 import { FileService } from '../file-upload/file.service';
 import { File } from '../file-upload/entities/file.entity';
+import type { Express } from 'express';
 
 @Injectable()
 export class InformationCardService {

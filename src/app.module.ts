@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-// Modules
+// Módulos
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LenguageModule } from './modules/lenguages/lenguage.module';
@@ -16,7 +16,7 @@ import { AnalysisModule } from './modules/analysis/analysis.module';
 import { AppointmentsModule } from './modules/appointment/appointments.module';
 import { InformationCardModule } from './modules/serviceInfoCard/information-card.module';
 
-// Entities
+// Entidades
 import { User } from './modules/user/entities/user.entities';
 import { Doctor } from './modules/doctors/entities/doctors.entities';
 import { Specialty } from './modules/specialties/entities/specialty.entity';
@@ -30,24 +30,35 @@ import { InformationCard } from './modules/serviceInfoCard/entities/service-info
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT, 10),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule, Analysis, Appointment, InformationCard],
-      synchronize: true,
-      ssl: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false
-        }
-      }
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'postgres',
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT, 10),
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE,
+        entities: [
+          User,
+          Doctor,
+          Specialty,
+          Lenguage,
+          File,
+          Hospital,
+          Schedule,
+          Analysis,
+          Appointment,
+          InformationCard,
+        ],
+        synchronize: true,
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
+      }),
     }),
 
     UserModule,
@@ -59,9 +70,9 @@ import { InformationCard } from './modules/serviceInfoCard/entities/service-info
     HospitalModule,
     AnalysisModule,
     AppointmentsModule,
-    InformationCardModule
+    InformationCardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

@@ -16,6 +16,8 @@ import {
 import { HospitalService } from './hospital.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import type { Express } from 'express';
+
 
 @Controller('hospitals')
 export class HospitalController {
