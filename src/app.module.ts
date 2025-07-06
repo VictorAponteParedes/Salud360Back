@@ -49,6 +49,7 @@ import { InformationCard } from './modules/serviceInfoCard/entities/service-info
         }
       }
     }),
+
     UserModule,
     AuthModule,
     LenguageModule,
