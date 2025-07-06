@@ -4,6 +4,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { FileService } from './file.service';
 import { v4 as uuidv4 } from 'uuid';
+import type { Express } from 'express'
 
 @Controller('upload')
 export class UploadController {

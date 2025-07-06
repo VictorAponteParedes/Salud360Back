@@ -5,6 +5,7 @@ import { File } from "../file-upload/entities/file.entity";
 import { FileService } from "../file-upload/file.service";
 import { Hospital } from "./entities/hospital.entities";
 import { InjectRepository } from "@nestjs/typeorm";
+import type { Express } from 'express'
 
 @Injectable()
 export class HospitalService {

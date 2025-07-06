@@ -8,6 +8,7 @@ import { FileService } from "../file-upload/file.service";
 import { File } from "../file-upload/entities/file.entity";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import type { Express } from 'express';
 
 @Injectable()
 export class UserService {

@@ -7,7 +7,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { EmailService } from '../Email/email.service';
 import * as bcrypt from 'bcrypt';
+import type { Express } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
+
+
 @Controller('users')
 export class UserController {
   constructor(
@@ -90,11 +93,11 @@ export class UserController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-    async updateUser(
-      @Param('id') id: string,
-      @Body() updateUserDto: UpdateUserDto
-    ) {
-      return this.userService.updateUser(id, updateUserDto);
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    return this.userService.updateUser(id, updateUserDto);
   }
 
 }

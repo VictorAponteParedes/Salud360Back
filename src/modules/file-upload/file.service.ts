@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 import { promises as fs } from 'fs';
 import { ConfigService } from '@nestjs/config';
+import type { Express } from 'express'
 
 @Injectable()
 export class FileService {

@@ -12,6 +12,7 @@ import { Hospital } from '../hospital/entities/hospital.entities';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { ScheduleDto } from '../schedule/dto/create-schedule.dto';
 import { WeekDay } from '../schedule/enum/weekDay';
+import type { Express } from 'express'
 
 @Injectable()
 export class DoctorsService {
@@ -91,7 +92,7 @@ export class DoctorsService {
       }
 
       // Validación y creación de horarios
-  let schedules: Schedule[] = [];
+      let schedules: Schedule[] = [];
       if (createDoctorDto.scheduleDtos && createDoctorDto.scheduleDtos.length > 0) {
         const validDays = Object.values(WeekDay);
 
