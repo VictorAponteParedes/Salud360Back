@@ -27,6 +27,7 @@ async function bootstrap() {
     console.error('❌ Falló conexión directa a PostgreSQL:', err.message);
   }
 
+
   // CORS
   app.enableCors({
     origin: configService.get('FRONTEND_URL') || 'http://localhost:5173',
