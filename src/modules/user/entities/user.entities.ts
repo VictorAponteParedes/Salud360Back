@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne, JoinColu
 import { File } from 'src/modules/file-upload/entities/file.entity';
 import { Hospital } from 'src/modules/hospital/entities/hospital.entities';
 import { Analysis } from 'src/modules/analysis/entities/analysis.entities';
+import { UserRole } from 'src/enum/userRol';
 
 @Entity()
 export class User {
@@ -48,8 +49,12 @@ export class User {
     @Column({ nullable: true })
     resetPasswordExpires?: Date;
 
-    @Column({ default: 'patient' })
-    role: string;
+    @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.PATIENT,
+    })
+    role: UserRole
 
     @ManyToMany(() => Doctor, doctor => doctor.patients)
     doctors: Doctor[];
