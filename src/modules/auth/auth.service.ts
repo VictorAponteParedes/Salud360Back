@@ -23,18 +23,29 @@ export class AuthService {
     async login(loginDto: LoginDto) {
         const user = await this.validateUser(loginDto.email, loginDto.password);
         if (!user) {
-            throw new UnauthorizedException('Credenciales inválidas ');
+            throw new UnauthorizedException('Credenciales inválidas');
         }
+
         const payload = {
-            email: user.email,
             sub: user.id,
+            email: user.email,
             role: user.role,
             firstName: user.firstName,
             lastName: user.lastName
-
         };
+
+        const token = this.jwtService.sign(payload);
+
         return {
-            access_token: this.jwtService.sign(payload),
+            access_token: token,
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName
+            }
         };
     }
+
 }
