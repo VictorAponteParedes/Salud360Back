@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param, Patch, UseGuards, Req, BadRequestException, Put } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param, Patch, UseGuards, Req, BadRequestException, Put, Delete, InternalServerErrorException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,7 +17,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly emailService: EmailService
-  ) { }
+  ) {}
 
   @Post('register')
   @UseInterceptors(FileInterceptor('profileImage'))
@@ -31,34 +31,45 @@ export class UserController {
   @Get(':id/profile-image')
   async getProfileImage(@Param('id') id: string) {
     const user = await this.userService.findById(id);
-
     if (!user || !user.profileImage) {
       throw new NotFoundException('User or profile image not found');
     }
-
     const url = await this.fileService.getFileUrl(user.profileImage.id);
     return { url };
   }
 
-  @Get(':id')
-  async getUserById(@Param('id') id: string) {
-    return this.userService.getUserById(id)
+  @Get('admins')
+  @UseGuards(AuthGuard('jwt'))
+  async getAdmins() {
+    try {
+      return await this.userService.getAdmins();
+    } catch (error) {
+      console.error('Error al obtener administradores:', error);
+      throw new InternalServerErrorException('Error al obtener la lista de administradores');
+    }
+  }
+
+  @Get('patients')
+  @UseGuards(AuthGuard('jwt'))
+  async getPatients() {
+    try {
+      return await this.userService.getPatients();
+    } catch (error) {
+      console.error('Error al obtener pacientes:', error);
+      throw new InternalServerErrorException('Error al obtener la lista de pacientes');
+    }
   }
 
   @Get()
   async getAllUsers() {
-    return this.userService.getAllUsers()
+    return this.userService.getAllUsers();
   }
-
 
   @Patch('change-password')
   @UseGuards(AuthGuard('jwt'))
-  async changePassword(
-    @Req() req, @Body() changePassword: ChangePasswordDto
-  ) {
-    return this.userService.changePassword(req.user.id, changePassword)
+  async changePassword(@Req() req, @Body() changePassword: ChangePasswordDto) {
+    return this.userService.changePassword(req.user.id, changePassword);
   }
-
 
   @Post('forgot-password')
   async forgotPassword(@Body('email') email: string) {
@@ -93,11 +104,18 @@ export class UserController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async updateUser(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto
-  ) {
+  async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.updateUser(id, updateUserDto);
   }
 
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt')) 
+  async deleteUser(@Param('id') id: string) {
+    return this.userService.deleteUser(id);
+  }
+
+  @Get(':id')
+  async getUserById(@Param('id') id: string) {
+    return this.userService.getUserById(id);
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException } from "@nestjs/common";
+import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entities";
@@ -9,6 +9,7 @@ import { File } from "../file-upload/entities/file.entity";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import type { Express } from 'express';
+import { UserRole } from "src/enum/userRol";
 
 @Injectable()
 export class UserService {
@@ -66,6 +67,31 @@ export class UserService {
             relations: ['profileImage']
         });
     }
+
+    async getAdmins() {
+    try {
+        return await this.userRepository.find({
+        where: { role: UserRole.ADMIN },
+        relations: ['profileImage'],
+        });
+    } catch (error) {
+        console.error('Error al obtener administradores:', error);
+        throw new InternalServerErrorException('No se pudieron obtener los administradores');
+        }
+    }
+
+    async getPatients() {
+    try {
+        return await this.userRepository.find({
+        where: { role: UserRole.PATIENT },
+        relations: ['hospital', 'doctors', 'profileImage'],
+        });
+    } catch (error) {
+        console.error('Error al obtener pacientes:', error);
+        throw new InternalServerErrorException('No se pudieron obtener los pacientes');
+        }
+    }
+
 
     async updateUser(id: string, updateUserDto: UpdateUserDto) {
         const user = await this.userRepository.findOne({ where: { id } });
@@ -129,4 +155,19 @@ export class UserService {
     async save(user: User) {
         return this.userRepository.save(user);
     }
+
+    async deleteUser(id: string) {
+        const user = await this.userRepository.findOne({ where: { id }, relations: ['profileImage'] });
+
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+        if (user.profileImage) {
+            await this.fileRepository.remove(user.profileImage);
+        }
+
+        await this.userRepository.remove(user);
+        return { message: 'Usuario eliminado correctamente' };
+    }
+
 }
