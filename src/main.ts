@@ -32,7 +32,7 @@ async function bootstrap() {
   app.enableCors({
   origin: (origin, callback) => {
     const allowedOrigins = [
-      'http://localhost:3000',
+      'http://localhost:5173',
       'https://salud-360-back-office.netlify.app'
     ];
     if (!origin || allowedOrigins.includes(origin)) {
