@@ -69,26 +69,26 @@ export class UserService {
     }
 
     async getAdmins() {
-    try {
-        return await this.userRepository.find({
-        where: { role: UserRole.ADMIN },
-        relations: ['profileImage'],
-        });
-    } catch (error) {
-        console.error('Error al obtener administradores:', error);
-        throw new InternalServerErrorException('No se pudieron obtener los administradores');
+        try {
+            return await this.userRepository.find({
+                where: { role: UserRole.ADMIN },
+                relations: ['profileImage'],
+            });
+        } catch (error) {
+            console.error('Error al obtener administradores:', error);
+            throw new InternalServerErrorException('No se pudieron obtener los administradores');
         }
     }
 
     async getPatients() {
-    try {
-        return await this.userRepository.find({
-        where: { role: UserRole.PATIENT },
-        relations: ['hospital', 'doctors', 'profileImage'],
-        });
-    } catch (error) {
-        console.error('Error al obtener pacientes:', error);
-        throw new InternalServerErrorException('No se pudieron obtener los pacientes');
+        try {
+            return await this.userRepository.find({
+                where: { role: UserRole.PATIENT },
+                relations: ['hospital', 'doctors', 'profileImage'],
+            });
+        } catch (error) {
+            console.error('Error al obtener pacientes:', error);
+            throw new InternalServerErrorException('No se pudieron obtener los pacientes');
         }
     }
 
@@ -157,17 +157,27 @@ export class UserService {
     }
 
     async deleteUser(id: string) {
-        const user = await this.userRepository.findOne({ where: { id }, relations: ['profileImage'] });
-
+        const user = await this.userRepository.findOne({
+            where: { id },
+            relations: ['profileImage'],
+        });
         if (!user) {
             throw new NotFoundException('Usuario no encontrado');
         }
-        if (user.profileImage) {
-            await this.fileRepository.remove(user.profileImage);
+        try {
+            if (user.profileImage) {
+                user.profileImage = null;
+                await this.userRepository.save(user);
+            }
+            if (user.profileImage) {
+                await this.fileRepository.delete(user.profileImage.id);
+            }
+            await this.userRepository.delete(id);
+            return { message: 'Usuario eliminado correctamente' };
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+            throw new InternalServerErrorException('No se pudo eliminar el usuario');
         }
-
-        await this.userRepository.remove(user);
-        return { message: 'Usuario eliminado correctamente' };
     }
 
 }
