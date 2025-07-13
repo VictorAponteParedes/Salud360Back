@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param, Patch, UseGuards, Req, BadRequestException, Put, Delete, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, NotFoundException, Param, Patch, UseGuards, Req, BadRequestException, Put, Delete, InternalServerErrorException, Res } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -7,8 +7,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { EmailService } from '../Email/email.service';
 import * as bcrypt from 'bcrypt';
-import type { Express } from 'express';
+import type { Express, Response } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PdfGeneratorService } from '../PdfGeneratorService/pdf-generator.service';
 
 
 @Controller('users')
@@ -16,8 +17,9 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly fileService: FileService,
-    private readonly emailService: EmailService
-  ) {}
+    private readonly emailService: EmailService,
+    private readonly pdfGeneratorService: PdfGeneratorService,
+  ) { }
 
   @Post('register')
   @UseInterceptors(FileInterceptor('profileImage'))
@@ -36,6 +38,16 @@ export class UserController {
     }
     const url = await this.fileService.getFileUrl(user.profileImage.id);
     return { url };
+  }
+
+  @Get(':id/pdf')
+  async getPdf(@Param('id') id: string, @Res() res: Response) {
+    const user = await this.userService.findById(id);
+    const pdfBuffer = await this.pdfGeneratorService.generateUserPdf(user);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=paciente-${id}.pdf`);
+    res.send(pdfBuffer);
   }
 
   @Get('admins')
@@ -102,6 +114,8 @@ export class UserController {
     return { message: 'Contraseña restablecida correctamente' };
   }
 
+
+
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
   async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -109,7 +123,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt')) 
+  @UseGuards(AuthGuard('jwt'))
   async deleteUser(@Param('id') id: string) {
     return this.userService.deleteUser(id);
   }
