@@ -9,7 +9,7 @@ import { EmailService } from '../Email/email.service';
 import * as bcrypt from 'bcrypt';
 import type { Express, Response } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PdfGeneratorService } from '../PdfGeneratorService/pdf-generator.service';
+// import { PdfGeneratorService } from '../PdfGeneratorService/pdf-generator.service';
 
 
 @Controller('users')
@@ -18,7 +18,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly emailService: EmailService,
-    private readonly pdfGeneratorService: PdfGeneratorService,
+    // private readonly pdfGeneratorService: PdfGeneratorService,
   ) { }
 
   @Post('register')
@@ -43,11 +43,11 @@ export class UserController {
   @Get(':id/pdf')
   async getPdf(@Param('id') id: string, @Res() res: Response) {
     const user = await this.userService.findById(id);
-    const pdfBuffer = await this.pdfGeneratorService.generateUserPdf(user);
+    // const pdfBuffer = await this.pdfGeneratorService.generateUserPdf(user);
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=paciente-${id}.pdf`);
-    res.send(pdfBuffer);
+    // res.send(pdfBuffer);
   }
 
   @Get('admins')
