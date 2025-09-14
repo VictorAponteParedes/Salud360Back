@@ -6,12 +6,18 @@ import { UserModule } from '../user/user.module';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
+import { BiometricController } from './biometric/biometric.controller';
+import { BiometricService } from './biometric/biometric.service';
+import { User } from '../user/entities/user.entities';
+import { BiometricChallenge } from '../user/entities/biometric-challenge.entity';
 
 @Module({
     imports: [
         ConfigModule,
         UserModule,
         PassportModule,
+        BiometricChallenge,
+        User,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -27,7 +33,7 @@ import { AuthController } from './auth.controller';
             },
         }),
     ],
-    providers: [AuthService, JwtStrategy],
-    controllers: [AuthController],
+    providers: [AuthService, JwtStrategy, BiometricService],
+    controllers: [AuthController, BiometricController],
 })
 export class AuthModule { }

@@ -27,7 +27,7 @@ import { Schedule } from './modules/schedule/entities/schedule.entity';
 import { Analysis } from './modules/analysis/entities/analysis.entities';
 import { Appointment } from './modules/appointment/entities/appointment.entities';
 import { InformationCard } from './modules/serviceInfoCard/entities/service-information-card.entities';
-
+import { BiometricChallenge } from './modules/user/entities/biometric-challenge.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,14 +40,14 @@ import { InformationCard } from './modules/serviceInfoCard/entities/service-info
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Doctor, Specialty, Lenguage, File, Hospital, Schedule, Analysis, Appointment, InformationCard],
+      entities: [BiometricChallenge, User, Doctor, Specialty, Lenguage, File, Hospital, Schedule, Analysis, Appointment, InformationCard],
       synchronize: true,
-      ssl: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false
-        }
-      }
+      // ssl: true,
+      // extra: {
+      //   ssl: {
+      //     rejectUnauthorized: false
+      //   }
+      // }
     }),
 
 

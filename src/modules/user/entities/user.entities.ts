@@ -44,15 +44,18 @@ export class User {
     password: string;
 
     @Column({ nullable: true })
+    biometricPublicKey: string;
+
+    @Column({ nullable: true })
     resetPasswordToken?: string;
 
     @Column({ nullable: true })
     resetPasswordExpires?: Date;
 
     @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.PATIENT,
+        type: 'enum',
+        enum: UserRole,
+        default: UserRole.PATIENT,
     })
     role: UserRole
 
