@@ -1,3 +1,4 @@
+// src/modules/auth/biometric/biometric.service.ts
 import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -5,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createPublicKey, verify } from 'crypto';
 import { User } from 'src/modules/user/entities/user.entities';
 import { BiometricChallenge } from 'src/modules/user/entities/biometric-challenge.entity';
-import { JwtService } from '@nestjs/jwt'; // NUEVO: Para generar access_token
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class BiometricService {
@@ -14,7 +15,7 @@ export class BiometricService {
         private userRepository: Repository<User>,
         @InjectRepository(BiometricChallenge)
         private challengeRepository: Repository<BiometricChallenge>,
-        private jwtService: JwtService, // NUEVO: Inyectar JwtService
+        private jwtService: JwtService,
     ) { }
 
     async generateChallenge(email: string) {
@@ -24,6 +25,13 @@ export class BiometricService {
             console.log(`[BiometricService] Usuario no encontrado: ${email}`);
             throw new BadRequestException('Usuario no encontrado');
         }
+
+        // NUEVO: Limpiar challenges antiguos no usados para evitar conflictos
+        await this.challengeRepository.update(
+            { userId: user.id, used: false },
+            { used: true }
+        );
+        console.log(`[BiometricService] Challenges antiguos marcados como usados para usuario: ${user.id}`);
 
         const challenge = uuidv4();
         const challengeEntity = this.challengeRepository.create({
@@ -66,7 +74,6 @@ export class BiometricService {
             throw new BadRequestException('Challenge inválido o ya usado');
         }
 
-        // Verificar tiempo de expiración (5 minutos)
         const now = new Date();
         const challengeAge = (now.getTime() - challengeEntity.createdAt.getTime()) / 1000 / 60;
         if (challengeAge > 5) {
@@ -74,7 +81,6 @@ export class BiometricService {
             throw new BadRequestException('Challenge expirado');
         }
 
-        // Verificar la firma
         try {
             const publicKey = createPublicKey({
                 key: Buffer.from(user.biometricPublicKey, 'base64'),
@@ -94,12 +100,10 @@ export class BiometricService {
                 throw new UnauthorizedException('Firma inválida');
             }
 
-            // Marcar el challenge como usado solo después de una verificación exitosa
             challengeEntity.used = true;
             await this.challengeRepository.save(challengeEntity);
             console.log(`[BiometricService] Challenge marcado como usado: ${challengeId}`);
 
-            // Generar access_token y devolver usuario completo
             const access_token = this.jwtService.sign({ sub: user.id, email: user.email });
             console.log(`[BiometricService] Login biométrico exitoso para usuario: ${user.id}, token generado`);
 
